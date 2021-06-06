@@ -1,16 +1,11 @@
 package file
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"sort"
 	"testing"
-
-	git "github.com/go-git/go-git/v5"
-	"github.com/pkg/errors"
 )
 
 func testPath() (string, error) {
@@ -28,39 +23,7 @@ func testGitDirs() []string {
 	}
 }
 
-func testSetupGitDir() error {
-	testPath, err := testPath()
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	gitDirs := testGitDirs()
-	if err := os.RemoveAll(testPath); err != nil {
-		return errors.Wrap(err, fmt.Sprintf("gitDirs: %v", gitDirs))
-	}
-	if err := os.MkdirAll(testPath, 0777); err != nil {
-		return errors.WithStack(err)
-	}
-
-	nongitdir := filepath.Join(testPath, "nongit")
-	if err := os.MkdirAll(nongitdir, 0777); err != nil {
-		return errors.Wrap(err, "mkdir nongit")
-	}
-	for _, gitDir := range gitDirs {
-		if err := os.MkdirAll(gitDir, 0777); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("path: %s", gitDir))
-		}
-		if _, err := git.PlainInit(gitDir, false); err != nil {
-			return errors.WithStack(err)
-		}
-	}
-
-	return nil
-}
 func TestFindGitDir(t *testing.T) {
-	err := testSetupGitDir()
-	if err != nil {
-		t.Errorf("error: %+v", err)
-	}
 	testPath, err := testPath()
 	if err != nil {
 		t.Errorf("error: %+v", err)

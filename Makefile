@@ -32,9 +32,10 @@ dev: $(BUILD_FILES)
 	go build -trimpath -ldflags "$(DEV_LDFLAGS)" -o "bin/git-push-notifier-dev" .
 
 test:
+	./scripts/test_setup.sh
 	go test ./...
 .PHONY: test
 
 lint:
-	golangci-lint run
+	golangci-lint run ./...
 .PHONY: lint

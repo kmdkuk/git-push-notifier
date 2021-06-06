@@ -1,7 +1,6 @@
 package file
 
 import (
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -22,11 +21,8 @@ func NewFile(root string) *File {
 
 func (f *File) FindGitDir() ([]string, error) {
 	paths := make([]string, 0)
-	err := filepath.WalkDir(f.root, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return errors.WithStack(err)
-		}
-		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) {
+	err := filepath.Walk(f.root, func(path string, info os.FileInfo, err error) error {
+		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) && info.IsDir() {
 			apath, err := filepath.Abs(path)
 			if err != nil {
 				return errors.Wrapf(err, "path: %s", path)
@@ -37,7 +33,7 @@ func (f *File) FindGitDir() ([]string, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error %v", err)
+		return nil, errors.WithStack(err)
 	}
 	return paths, nil
 }
