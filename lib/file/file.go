@@ -27,11 +27,11 @@ func (f *File) FindGitDir() ([]string, error) {
 			return errors.WithStack(err)
 		}
 		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) {
-			rel, err := filepath.Rel(f.root, path)
+			apath, err := filepath.Abs(path)
 			if err != nil {
-				return errors.WithStack(err)
+				return errors.Wrapf(err, "path: %s", path)
 			}
-			paths = append(paths, filepath.Join("/", rel))
+			paths = append(paths, apath)
 			return fs.SkipDir
 		}
 		return nil

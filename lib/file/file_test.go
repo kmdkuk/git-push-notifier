@@ -41,16 +41,15 @@ func testSetupGitDir() error {
 		return errors.WithStack(err)
 	}
 
-	path := filepath.Join(testPath, "nongit")
-	if err := os.MkdirAll(path, 0777); err != nil {
+	nongitdir := filepath.Join(testPath, "nongit")
+	if err := os.MkdirAll(nongitdir, 0777); err != nil {
 		return errors.Wrap(err, "mkdir nongit")
 	}
 	for _, gitDir := range gitDirs {
-		path := filepath.Join(testPath, gitDir)
-		if err := os.MkdirAll(path, 0777); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("path: %s", path))
+		if err := os.MkdirAll(gitDir, 0777); err != nil {
+			return errors.Wrap(err, fmt.Sprintf("path: %s", gitDir))
 		}
-		if _, err := git.PlainInit(path, false); err != nil {
+		if _, err := git.PlainInit(gitDir, false); err != nil {
 			return errors.WithStack(err)
 		}
 	}
