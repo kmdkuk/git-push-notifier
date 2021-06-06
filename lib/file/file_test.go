@@ -56,7 +56,10 @@ func testSetupGitDir() error {
 	return nil
 }
 func TestFindGitDir(t *testing.T) {
-	testSetupGitDir()
+	err := testSetupGitDir()
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
 	testPath, err := testPath()
 	if err != nil {
 		t.Errorf("error: %v", err)
