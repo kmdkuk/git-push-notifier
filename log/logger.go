@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/kmdkuk/go-cli-template/version"
+	"github.com/kmdkuk/git-push-notifier/version"
 )
 
 type Level int
