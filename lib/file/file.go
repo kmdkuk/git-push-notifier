@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kmdkuk/git-push-notifier/log"
+	"github.com/pkg/errors"
 )
 
 type File struct {
@@ -24,14 +24,12 @@ func (f *File) FindGitDir() ([]string, error) {
 	paths := make([]string, 0)
 	err := filepath.WalkDir(f.root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) {
-			log.Debugf("root %s\n", f.root)
-			log.Debugf("path %s\n", path)
 			rel, err := filepath.Rel(f.root, path)
 			if err != nil {
-				return err
+				return errors.WithStack(err)
 			}
 			paths = append(paths, filepath.Join("/", rel))
 			return fs.SkipDir
