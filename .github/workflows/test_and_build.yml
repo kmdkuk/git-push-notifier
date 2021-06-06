@@ -40,6 +40,8 @@ jobs:
             ${{ runner.os }}-go-
       - name: go mod download
         run: go mod download
+      - name: go install
+        run: make install-go-tools
       - name: Ensure go.mod is already tidied
         run: go mod tidy && git diff -s --exit-code go.sum
       - name: build
