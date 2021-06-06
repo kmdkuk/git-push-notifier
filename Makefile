@@ -34,3 +34,6 @@ dev: $(BUILD_FILES)
 test:
 	go test ./...
 .PHONY: test
+
+lint:
+	golangci-lint run
