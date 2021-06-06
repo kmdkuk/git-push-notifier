@@ -31,6 +31,15 @@ bin/git-push-notifier: $(BUILD_FILES)
 dev: $(BUILD_FILES)
 	go build -trimpath -ldflags "$(DEV_LDFLAGS)" -o "bin/git-push-notifier-dev" .
 
+install-go-tools:
+	cat tools.go | awk -F'"' '/_/ {print $$2}' | xargs -tI {} go install {}
+.PHONY: install-go-tools
+
 test:
+	./scripts/test_setup.sh
 	go test ./...
 .PHONY: test
+
+lint:
+	golangci-lint run ./...
+.PHONY: lint
