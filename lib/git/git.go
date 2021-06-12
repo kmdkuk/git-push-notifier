@@ -41,11 +41,11 @@ func (g *Git) FindDirtyGit() ([]string, error) {
 				return xerrors.Errorf("%w", err)
 			}
 
-			g.Lock()
 			if !status.IsClean() {
+				g.Lock()
 				dirtyDir = append(dirtyDir, dir)
+				g.Unlock()
 			}
-			g.Unlock()
 			return nil
 		})
 	}
