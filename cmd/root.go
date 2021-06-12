@@ -23,10 +23,13 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"runtime/pprof"
 
 	"github.com/kmdkuk/git-push-notifier/lib/file"
 	"github.com/kmdkuk/git-push-notifier/lib/git"
 	"github.com/kmdkuk/git-push-notifier/log"
+	"github.com/kmdkuk/git-push-notifier/version"
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
 
@@ -50,6 +53,17 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if version.Version == version.Dev {
+			f, err := os.Create("cpu.pprof")
+			if err != nil {
+				return err
+			}
+
+			if err := pprof.StartCPUProfile(f); err != nil {
+				return err
+			}
+			defer pprof.StopCPUProfile()
+		}
 		f := file.NewFile(filePath)
 		gitDir, err := f.FindGitDir()
 		if err != nil {

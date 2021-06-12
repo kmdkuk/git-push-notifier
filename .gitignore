@@ -110,3 +110,5 @@ tmp
 
 coverage.html
 coverage.txt
+
+*.pprof
