@@ -37,7 +37,8 @@ install-go-tools:
 
 test:
 	./scripts/test_setup.sh
-	go test ./...
+	go test -race -timeout 30m -coverprofile=coverage.txt -covermode=atomic ./...
+	go tool cover -html=coverage.txt -o coverage.html
 .PHONY: test
 
 lint:

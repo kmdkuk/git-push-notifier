@@ -107,3 +107,6 @@ bin/
 .history/
 
 tmp
+
+coverage.html
+coverage.txt
