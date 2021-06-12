@@ -21,7 +21,7 @@ func NewFile(root string) *File {
 
 func (f *File) FindGitDir() ([]string, error) {
 	paths := make([]string, 0)
-	err := filepath.Walk(f.root, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(f.root, func(path string, info fs.DirEntry, err error) error {
 		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) && info.IsDir() {
 			apath, err := filepath.Abs(path)
 			if err != nil {
