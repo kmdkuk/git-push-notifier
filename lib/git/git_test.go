@@ -1,4 +1,4 @@
-package file
+package git
 
 import (
 	"reflect"
@@ -7,14 +7,15 @@ import (
 	. "github.com/kmdkuk/git-push-notifier/helper/test"
 )
 
-func TestFindGitDir(t *testing.T) {
-	testPath := GetPath()
-	f := NewFile(testPath)
-	actual, err := f.FindGitDir()
+func TestFindNonStaginGit(t *testing.T) {
+	gitDirs := GetGitDirs()
+	g := NewGit(gitDirs)
+	actual, err := g.FindDirtyGit()
 	if err != nil {
-		t.Errorf("error: %+v", err)
+		t.Errorf("error: %+v\n", err)
 	}
-	expects := GetGitDirs()
+	expects := GetNonStagingGitDirs()
+
 	SortString(actual)
 	SortString(expects)
 	if !reflect.DeepEqual(actual, expects) {
