@@ -25,7 +25,7 @@ func (f *File) FindGitDir() ([]string, error) {
 		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) && info.IsDir() {
 			apath, err := filepath.Abs(path)
 			if err != nil {
-				return xerrors.Errorf("path = %s, err: %w", err)
+				return xerrors.Errorf("path = %s, err: %w", path, err)
 			}
 			paths = append(paths, apath)
 			return fs.SkipDir
