@@ -1,9 +1,11 @@
 package git
 
 import (
+	"bytes"
+	"os"
+	"os/exec"
 	"sync"
 
-	gitv5 "github.com/go-git/go-git/v5"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/xerrors"
 )
@@ -26,26 +28,38 @@ func (g *Git) FindDirtyGit() ([]string, error) {
 	for _, dir := range g.paths {
 		dir := dir
 		eg.Go(func() error {
-			r, err := gitv5.PlainOpen(dir)
-			if err != nil {
+			/*
+				// TODO: too slow
+				r, err := gitv5.PlainOpen(dir)
+				if err != nil {
+					return xerrors.Errorf("%w", err)
+				}
+
+				w, err := r.Worktree()
+				if err != nil {
+					return xerrors.Errorf("%w", err)
+				}
+
+				status, err := w.Status()
+				if err != nil {
+					return xerrors.Errorf("%w", err)
+				}
+			*/
+
+			var buffer bytes.Buffer
+			statusCmd := exec.Command("git", "-C", dir, "status", "--porcelain")
+			statusCmd.Stdout = &buffer
+			statusCmd.Stderr = os.Stderr
+			if err := statusCmd.Run(); err != nil {
 				return xerrors.Errorf("%w", err)
 			}
+			status := buffer.String()
 
-			w, err := r.Worktree()
-			if err != nil {
-				return xerrors.Errorf("%w", err)
-			}
-
-			status, err := w.Status()
-			if err != nil {
-				return xerrors.Errorf("%w", err)
-			}
-
-			g.Lock()
-			if !status.IsClean() {
+			if len(status) != 0 {
+				g.Lock()
 				dirtyDir = append(dirtyDir, dir)
+				g.Unlock()
 			}
-			g.Unlock()
 			return nil
 		})
 	}

@@ -44,3 +44,7 @@ test:
 lint:
 	golangci-lint run ./...
 .PHONY: lint
+
+profile:
+	go tool pprof -http="localhost:8080" bin/git-push-notifier cpu.pprof
+.PHONY: profile

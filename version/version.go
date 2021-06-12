@@ -1,7 +1,11 @@
 package version
 
+const (
+	Dev = "DEV"
+)
+
 var (
-	Version   = "DEV"
+	Version   = Dev
 	Revision  = "unset"
 	BuildDate = ""
 )
