@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
+	"golang.org/x/xerrors"
 )
 
 type File struct {
@@ -25,7 +25,7 @@ func (f *File) FindGitDir() ([]string, error) {
 		if _, err := os.Stat(filepath.Join(path, ".git")); !os.IsNotExist(err) && info.IsDir() {
 			apath, err := filepath.Abs(path)
 			if err != nil {
-				return errors.Wrapf(err, "path: %s", path)
+				return xerrors.Errorf("path = %s, err: %w", err)
 			}
 			paths = append(paths, apath)
 			return fs.SkipDir
@@ -33,7 +33,7 @@ func (f *File) FindGitDir() ([]string, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, xerrors.Errorf("%w", err)
 	}
 	return paths, nil
 }

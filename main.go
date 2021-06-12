@@ -28,6 +28,8 @@ import (
 
 func main() {
 	log.Debug("start command")
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		log.Fatalf("%+v", err)
+	}
 	log.Debug("finish command")
 }

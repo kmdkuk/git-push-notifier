@@ -27,6 +27,7 @@ import (
 	"github.com/kmdkuk/git-push-notifier/lib/file"
 	"github.com/kmdkuk/git-push-notifier/log"
 	"github.com/spf13/cobra"
+	"golang.org/x/xerrors"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -47,25 +48,24 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		f := file.NewFile(filePath)
 		gitdir, err := f.FindGitDir()
 		for _, dir := range gitdir {
 			fmt.Println(dir)
 		}
 		if err != nil {
-			log.Fatal(err)
+			return xerrors.Errorf("%+w", err)
 		}
 		log.Debugf("%v\n", gitdir)
+		return nil
 	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
-	}
+func Execute() error {
+	return rootCmd.Execute()
 }
 
 func init() {
@@ -93,7 +93,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			log.Fatal(err)
+			log.Errorf("%+v", err)
 		}
 
 		// Search config in home directory with name ".git-push-notifier" (without extension).
