@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	"github.com/kmdkuk/git-push-notifier/lib/file"
+	"github.com/kmdkuk/git-push-notifier/lib/git"
 	"github.com/kmdkuk/git-push-notifier/log"
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
@@ -50,14 +51,18 @@ to quickly create a Cobra application.`,
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
 		f := file.NewFile(filePath)
-		gitdir, err := f.FindGitDir()
-		for _, dir := range gitdir {
+		gitDir, err := f.FindGitDir()
+		if err != nil {
+			return xerrors.Errorf("%w", err)
+		}
+		g := git.NewGit(gitDir)
+		dirtyDir, err := g.FindDirtyGit()
+		if err != nil {
+			return xerrors.Errorf("%w", err)
+		}
+		for _, dir := range dirtyDir {
 			fmt.Println(dir)
 		}
-		if err != nil {
-			return xerrors.Errorf("%+w", err)
-		}
-		log.Debugf("%v\n", gitdir)
 		return nil
 	},
 }
