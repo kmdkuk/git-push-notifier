@@ -22,14 +22,36 @@ THE SOFTWARE.
 package main
 
 import (
+	"os"
+	"runtime/pprof"
+
 	"github.com/kmdkuk/git-push-notifier/cmd"
 	"github.com/kmdkuk/git-push-notifier/log"
+	"github.com/kmdkuk/git-push-notifier/version"
 )
 
 func main() {
-	log.Debug("start command")
-	if err := cmd.Execute(); err != nil {
+	if err := run(); err != nil {
 		log.Fatalf("%+v", err)
 	}
+}
+
+func run() error {
+	if version.Version == version.Dev {
+		f, err := os.Create("cpu.pprof")
+		if err != nil {
+			return err
+		}
+
+		if err := pprof.StartCPUProfile(f); err != nil {
+			return err
+		}
+		defer pprof.StopCPUProfile()
+	}
+	log.Debug("start command")
+	if err := cmd.Execute(); err != nil {
+		return err
+	}
 	log.Debug("finish command")
+	return nil
 }
