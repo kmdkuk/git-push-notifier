@@ -50,13 +50,7 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
-		f := file.NewFile(filePath)
-		gitDir, err := f.FindGitDir()
-		if err != nil {
-			return xerrors.Errorf("%w", err)
-		}
-		g := git.NewGit(gitDir)
-		dirtyDir, err := g.FindDirtyGit()
+		dirtyDir, err := findDirtyGit(filePath)
 		if err != nil {
 			return xerrors.Errorf("%w", err)
 		}
@@ -86,7 +80,7 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.Flags().StringVarP(&filePath, "path", "p", "/", "Path of the root to traverse")
+	rootCmd.PersistentFlags().StringVarP(&filePath, "path", "p", "/", "Path of the root to traverse")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -112,4 +106,14 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		log.Error("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func findDirtyGit(filepath string) ([]string, error) {
+	f := file.NewFile(filePath)
+	gitDir, err := f.FindGitDir()
+	if err != nil {
+		return nil, xerrors.Errorf("%w", err)
+	}
+	g := git.NewGit(gitDir)
+	return g.FindDirtyGit()
 }
