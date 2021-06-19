@@ -3,7 +3,6 @@ package git
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -133,7 +132,6 @@ func runCommand(cmdName string, args ...string) (string, error) {
 	var buffer bytes.Buffer
 	cmd := exec.Command(cmdName, args...)
 	cmd.Stdout = &buffer
-	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return "", err
 	}
