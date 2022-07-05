@@ -25,6 +25,10 @@ GO_LDFLAGS := -X github.com/kmdkuk/git-push-notifier/version.BuildDate=$(BUILD_D
 DEV_LDFLAGS := $(GO_LDFLAGS)
 GO_LDFLAGS := -X github.com/kmdkuk/git-push-notifier/version.Version=$(VERSION) $(GO_LDFLAGS)
 
+# Test tools
+BIN_DIR := $(shell pwd)/bin
+GOLANGCI_LINT := $(BIN_DIR)/golangci-lint
+
 bin/git-push-notifier: $(BUILD_FILES)
 	go build -trimpath -ldflags "$(GO_LDFLAGS)" -o "$@" .
 
@@ -41,10 +45,13 @@ test:
 	go tool cover -html=coverage.txt -o coverage.html
 .PHONY: test
 
-lint:
-	golangci-lint run ./...
+lint: $(GOLANGCI_LINT)
+	$(GOLANGCI_LINT) run ./...
 .PHONY: lint
 
 profile:
 	go tool pprof -http="localhost:8080" bin/git-push-notifier cpu.pprof
 .PHONY: profile
+
+$(GOLANGCI_LINT):
+	GOBIN=$(BIN_DIR) go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
