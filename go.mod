@@ -1,12 +1,12 @@
 module github.com/kmdkuk/git-push-notifier
 
-go 1.18
+go 1.24.0
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
-	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
+	golang.org/x/sync v0.19.0
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f
 )
 
